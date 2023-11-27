@@ -64,8 +64,8 @@ async function subscribeToQueue(queueName) {
   }
 }
 
-// Subscribe to Message Stream
-async function subscribeToMessageStream(queueName) {
+// Bind Queue to RabbitMQ Exchange
+async function subscribeToRabbitMQExchange(queueName) {
   try {
     // Establish connection to RabbitMQ
     const connection = await getConnection();
@@ -111,5 +111,5 @@ async function subscribeToMessageStream(queueName) {
 
 module.exports = {
   subscribeToQueue,
-  subscribeToMessageStream,
+  subscribeToRabbitMQExchange,
 };
