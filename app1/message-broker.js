@@ -48,7 +48,7 @@ async function publishMessageToQueue(queueName, message) {
   }
 }
 
-async function sendFileToQueueAsStream(routingKey, fileBuffer) {
+async function sendFileToRabbitMQExchange(routingKey, fileBuffer) {
   try {
     // Establish RabbitMQ connection
     const connection = await getConnection();
@@ -78,5 +78,5 @@ async function sendFileToQueueAsStream(routingKey, fileBuffer) {
 
 module.exports = {
   publishMessageToQueue,
-  sendFileToQueueAsStream,
+  sendFileToRabbitMQExchange,
 };

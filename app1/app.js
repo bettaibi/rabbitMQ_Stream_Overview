@@ -1,7 +1,7 @@
 const express = require("express");
 const {
   publishMessageToQueue,
-  sendFileToQueueAsStream,
+  sendFileToRabbitMQExchange,
 } = require("./message-broker");
 const fs = require("fs");
 
@@ -39,12 +39,12 @@ app.get("/doc", async (req, res) => {
   res.send("File has been published");
 });
 
-// Send PDF to App2 As stream
-app.get("/pdf", async (req, res) => {
+// Send PDF to RabbitMQ Exchange
+app.get("/exchange/pdf", async (req, res) => {
   const pdfBuffer = fs.readFileSync("./file_to_send.pdf");
   const routingKey = `pdf.routing_key.2`;
 
-  await sendFileToQueueAsStream(routingKey, pdfBuffer);
+  await sendFileToRabbitMQExchange(routingKey, pdfBuffer);
 
   res.send("PDF has been published");
 });
