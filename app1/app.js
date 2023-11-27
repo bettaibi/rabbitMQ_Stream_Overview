@@ -3,11 +3,13 @@ const {
   publishMessageToQueue,
   sendFileToRabbitMQExchange,
 } = require("./message-broker");
+const { publishFileToRabbitMQStream } = require("./rabbitmq-stream");
 const fs = require("fs");
 
 const app = express();
 
 const QUEUE_NAME = "mq.tasks";
+const STREAM_NAME = "mq.streams";
 
 // Send a text to App2 through a queue
 app.get("/text/:message", async (req, res) => {
@@ -47,6 +49,15 @@ app.get("/exchange/pdf", async (req, res) => {
   await sendFileToRabbitMQExchange(routingKey, pdfBuffer);
 
   res.send("PDF has been published");
+});
+
+// Send PDF to RabbitMQ Stream
+app.get("/stream/pdf", async (_, res) => {
+  const pdfBuffer = fs.readFileSync("./code_example.txt");
+
+  await publishFileToRabbitMQStream(STREAM_NAME, pdfBuffer);
+
+  res.send("PDF has been published to RabbitMQ Stream");
 });
 
 app.listen(3000, () => {

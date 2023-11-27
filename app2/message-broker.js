@@ -109,7 +109,47 @@ async function subscribeToRabbitMQExchange(queueName) {
   }
 }
 
+// Subscribe to rabbitMQ Stream
+async function subscribeToRabbitMQStream(streamName) {
+  try {
+    // Establish a connection to RabbitMQ
+    const connection = await getConnection();
+
+    // Create a Channel
+    const channel = await connection.createChannel();
+
+    console.log("Waiting for chunks...");
+
+    await channel.prefetch(1000);
+
+    // Consume messages from RabbitMQ
+    await channel.consume(
+      streamName,
+      async (msg) => {
+        if (!msg) {
+          return;
+        }
+
+        const receivedFileBuffer = msg.content;
+
+        console.log(receivedFileBuffer.toString());
+
+        // Save received File to disk
+        // fs.writeFileSync(`${routingKey}.pdf`, receivedFileBuffer);
+
+        console.log("File received and saved");
+
+        channel.ack(msg);
+      },
+      { arguments: { "x-stream-offset": "first" } }
+    );
+  } catch (err) {
+    console.error("Failed to subscribe to RabbitMQ Stream", err);
+  }
+}
+
 module.exports = {
   subscribeToQueue,
   subscribeToRabbitMQExchange,
+  subscribeToRabbitMQStream,
 };
